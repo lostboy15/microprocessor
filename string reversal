@@ -1,0 +1,37 @@
+.model small
+.stack
+.data
+str1 db "hello$"
+len dw  $-str1
+str2 db 10 dup('$')
+mystr db 10,13,"reverse string: $"
+.code
+.startup
+mov ax,@data
+mov ds,ax
+mov es,ax
+lea si,str1
+lea di,str2+4
+mov cl,'$'
+mov [di],cl
+mov cx,len-2
+up:cld
+lodsb
+std
+stosb
+loop up
+lea dx,str1
+mov ah,09h
+int 21h
+lea dx,mystr
+mov ah,09h
+int 21h
+lea dx,str2
+mov ah,09h
+int 21h
+mov ah,4ch
+int 21h
+.exit
+end
+
+
