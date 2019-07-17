@@ -1,0 +1,57 @@
+Program:
+.model small
+.stack 100
+.data
+num dw 06h
+temp dw ?
+fact1 dw ?
+fact2 dw ?
+str3 db "number is 6h$"
+str2 db 10,13, "factorial : $"
+strdisp macro str1
+lea dx,str1
+mov ah,09h
+int 21h
+endm
+.code
+.startup
+mov ax,@data
+mov ds,ax
+strdisp str3
+mov ax,num
+call factorial
+strdisp str2
+mov bx,fact1
+mov temp,bx
+call dispdigit
+mov bx,fact2
+mov temp,bx
+call dispdigit
+.exit
+factorial proc near
+mov bx,ax
+dec bx
+up:mul bx
+mov fact1,ax
+mov fact2,dx
+dec bx
+jnz up
+ret
+factorial endp
+dispdigit proc near
+mov cx,04h
+up1:mov ax,temp
+rol ax,04h
+mov temp,ax
+and ax,000fh
+cmp ax,000ah
+jb dig
+add al,07h
+dig:add al,30h
+mov dl,al
+mov ah,02h
+int 21h
+loop up1
+ret
+dispdigit endp
+end
