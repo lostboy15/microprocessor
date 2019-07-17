@@ -1,0 +1,58 @@
+.model small
+.stack 100
+.data
+num1 dw 0ah
+num2 dw 05h
+gcd dw ?
+temp dw ?
+mystr1 db "num1=a num2=5$"
+mystr db 10,13,"gcd is $"
+strdisp macro str1
+lea dx,str1
+mov ah,09h
+int 21h
+endm
+.code
+.startup
+         MOV AX,@DATA
+         MOV DS,AX
+         strdisp mystr1
+         MOV AX,NUM1  
+         MOV BX,NUM2   
+  UP: CMP AX,BX       
+      JE EXIT          
+      JB EXCG        
+                       
+  UP1: MOV DX,0H      
+       DIV BX         
+       CMP DX,0      
+       JE EXIT       
+       MOV AX,DX      
+       JMP UP       
+  EXCG:XCHG AX,BX     
+       JMP UP1       
+  EXIT:MOV GCD,BX
+       strdisp mystr
+       mov bx,gcd
+       mov temp,bx
+       call dispdigit
+       MOV AH,4CH
+       INT 21H
+.exit
+dispdigit proc near
+mov cx,04
+upp: mov ax,temp
+rol ax,04
+mov temp,ax
+and ax,000fh
+cmp ax,000ah
+jb digit
+add ax,07h
+digit: add ax,30h
+mov dl,al
+mov ah,02h
+int 21h
+loop upp
+ret
+dispdigit endp
+end
