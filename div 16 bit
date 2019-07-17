@@ -1,0 +1,60 @@
+.model small
+.stack 100
+.data
+a dw 1234h
+b dw 4567h
+c dw ?
+d dw ?
+temp dw ?
+str1 db 10,13,"first number is:1234 $"
+str2 db 10,13, "second number is:4567 $"
+qstr db 10,13, "quotient is: $"
+rstr db 10,13, "remainder is: $"
+strdisp macro str1
+lea dx,str1
+mov ah,09h
+int 21h
+endm
+.code
+.startup
+mov ax,@data
+mov ds,ax
+mov ax,a
+cmp ax,0h
+jb sim
+mov dx,0000h
+jmp down
+sim:mov dx,0ffffh
+down:div b
+mov c,ax
+mov d,dx
+strdisp str1
+strdisp str2
+strdisp qstr
+mov ax,c
+mov temp,ax
+call dispdigit
+strdisp rstr
+mov dx,d
+mov temp,dx
+call dispdigit
+
+.exit
+dispdigit proc near
+mov cx,04h
+up:mov ax,temp
+   rol ax,04h
+mov temp,ax
+and ax,000fh
+cmp ax,000ah
+jb dig
+add al,07h
+dig:add al,30h
+mov dl,al
+mov ah,02h
+int 21h
+loop up
+ret
+dispdigit endp
+end
+
