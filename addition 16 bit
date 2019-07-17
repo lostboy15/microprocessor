@@ -1,0 +1,48 @@
+.model small
+.stack 100
+.data
+a dw 1234h
+b dw 4567h
+c dw ?
+temp dw ?
+str1 db 10,13,"first number is:1234 $"
+str2 db 10,13, "second number is:4567 $"
+restr db 10,13, "result is: $"
+strdisp macro str1
+lea dx,str1
+mov ah,09h
+int 21h
+endm
+.code
+.startup
+mov ax,@data
+mov ds,ax
+mov ax,a
+mov bx,b
+add ax,bx
+mov c,ax
+strdisp str1
+strdisp str2
+strdisp restr
+mov ax,c
+mov temp,ax
+call dispdigit
+.exit
+dispdigit proc near
+mov cx,04h
+up:mov ax,temp
+   rol ax,04h
+mov temp,ax
+and ax,000fh
+cmp ax,000ah
+jb dig
+add al,07h
+dig:add al,30h
+mov dl,al
+mov ah,02h
+int 21h
+loop up
+ret
+dispdigit endp
+end
+
