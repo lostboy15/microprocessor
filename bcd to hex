@@ -1,0 +1,57 @@
+.model small
+.stack 100
+.data
+
+opr1 db ?
+temp db  ?
+
+
+.code
+mov ax,@data
+mov ds,ax
+
+mov cx, 02h
+mov ah,01h
+int 21h
+
+
+sub al,30h
+and al,0fh
+mov bl,10
+mul bl
+
+   mov opr1, al
+mov ah,01h
+int 21h
+
+sub al,30h
+and al,0fh
+
+  add al,opr1
+  
+mov temp,al
+call display_digit
+  
+mov ah,4ch
+int 21h
+.exit
+
+display_digit proc near
+ mov ch,02h
+ up:mov al,temp
+ mov cl,04h
+ rol al,cl
+ mov temp,al
+ and al,0fh
+ cmp al,0Ah
+ jb digit
+ add al,07h
+ digit: add al,30h
+ mov dl,al
+ mov ah,02h
+ int 21h
+ dec ch
+ jnz up
+ret
+display_digit endp
+end
